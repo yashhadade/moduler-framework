@@ -5,8 +5,9 @@ import { getPrivateKey } from '../../utility/key.generate.js';
 import bcrpt from 'bcrypt';
 import adminServices from '../admin/admin.services.js';
 import refreshTokenServices from '../refreshToken/refreshToken.services.js';
-import { RefreshTokenStatus } from '../refreshToken/refreshToken.schema.js';
+
 import { Role } from '../../utility/constant.js';
+import { RefreshTokenStatus } from '../../utility/constant.js';
 
 const accessTokenOptions: SignOptions = {
   algorithm: 'RS256',

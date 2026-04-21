@@ -1,10 +1,7 @@
 import { BaseSchema } from '../../utility/base.schema.js';
 import { model, Types } from 'mongoose';
 
-const RefreshTokenStatus = {
-  ACTIVE: 'ACTIVE',
-  REVOKED: 'REVOKED',
-} as const;
+
 
 const refreshTokenSchema = new BaseSchema({
   userId: {
