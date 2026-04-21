@@ -21,7 +21,7 @@ const AdminLogin = async (usernameOrEmail: string, password: string) => {
   const admin = await adminServices.findOneLean({
     $or: [{ email: usernameOrEmail.toLowerCase() }, { name: usernameOrEmail }],
   });
-  
+
   if (!admin) throw AUTH_RESPONSES.INVALID_CREDENTIALS;
   const isPasswordValid = await bcrpt.compare(password, admin.password as string);
   if (!isPasswordValid) throw AUTH_RESPONSES.INVALID_CREDENTIALS;
@@ -29,14 +29,11 @@ const AdminLogin = async (usernameOrEmail: string, password: string) => {
     id: admin._id as string,
     role: Role.ADMIN,
   });
-  const refreshToken = await refreshTokenServices.createToken(
-    admin._id as string,
-    Role.ADMIN
-  );;
-  return { 
-    accessToken, 
-    refreshToken: refreshToken.token, 
-    admin: { ...admin, password: undefined } 
+  const refreshToken = await refreshTokenServices.createToken(admin._id as string, Role.ADMIN);
+  return {
+    accessToken,
+    refreshToken: refreshToken.token,
+    admin: { ...admin, password: undefined },
   };
 };
 const refresh = async (refreshToken: string) => {
@@ -66,7 +63,6 @@ const refresh = async (refreshToken: string) => {
     refreshToken: newRefreshToken.token,
   };
 };
-
 
 export default {
   AdminLogin,
