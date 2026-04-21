@@ -1,73 +1,68 @@
 #!/usr/bin/env node
 
-const { program } = require("commander");
-const fs = require("fs-extra");
-const path = require("path");
-const inquirer = require("inquirer");
+const { program } = require('commander');
+const fs = require('fs-extra');
+const path = require('path');
+const inquirer = require('inquirer');
 const crypto = require('crypto');
 
-program.version("1.0.0").description("My Custom Node.js Framework CLI");
+program.version('1.0.0').description('My Custom Node.js Framework CLI');
 
 // --- COMMAND: CREATE NEW PROJECT ---
-program
-  .argument('[project-name]', 'Name of the project to create')
-  .action(async (projectName) => {
-    if (!projectName) {
-      const answers = await inquirer.prompt([{
-        type: 'input', name: 'name', message: 'Project name?', default: 'my-api'
-      }]);
-      projectName = answers.name;
-    }
+program.argument('[project-name]', 'Name of the project to create').action(async (projectName) => {
+  if (!projectName) {
+    const answers = await inquirer.prompt([
+      {
+        type: 'input',
+        name: 'name',
+        message: 'Project name?',
+        default: 'my-api',
+      },
+    ]);
+    projectName = answers.name;
+  }
 
-    const targetDir = path.join(process.cwd(), projectName);
-    const templateDir = path.resolve(__dirname, '../template');
+  const targetDir = path.join(process.cwd(), projectName);
+  const templateDir = path.resolve(__dirname, '../template');
 
-    try {
-      // 1. Copy everything from your template folder
-      await fs.copy(templateDir, targetDir);
-      
-      // 2. Define the path where keys SHOULD live
-      const keysDir = path.join(targetDir, 'src', 'app', 'utility', 'keys');
+  try {
+    // 1. Copy everything from your template folder
+    await fs.copy(templateDir, targetDir);
 
-      // 3. Ensure the folder exists (just in case the template was empty)
-      await fs.ensureDir(keysDir);
+    // 2. Define the path where keys SHOULD live
+    const keysDir = path.join(targetDir, 'src', 'app', 'utility', 'keys');
 
-      console.log('🔐 Generating unique RSA keys for this project...');
+    // 3. Ensure the folder exists (just in case the template was empty)
+    await fs.ensureDir(keysDir);
 
-      // 4. Generate the actual Key Pair
-      const { privateKey, publicKey } = crypto.generateKeyPairSync('rsa', {
-        modulusLength: 2048,
-        publicKeyEncoding: { type: 'spki', format: 'pem' },
-        privateKeyEncoding: { type: 'pkcs8', format: 'pem' },
-      });
+    console.log('🔐 Generating unique RSA keys for this project...');
 
-      // 5. Write them into the specific folder
-      fs.writeFileSync(path.join(keysDir, 'private.pem'), privateKey);
-      fs.writeFileSync(path.join(keysDir, 'public.pem'), publicKey);
+    // 4. Generate the actual Key Pair
+    const { privateKey, publicKey } = crypto.generateKeyPairSync('rsa', {
+      modulusLength: 2048,
+      publicKeyEncoding: { type: 'spki', format: 'pem' },
+      privateKeyEncoding: { type: 'pkcs8', format: 'pem' },
+    });
 
-      console.log(`🚀 Project ${projectName} created with unique security keys!`);
-      
-    } catch (err) {
-      console.error('❌ Error during project creation:', err);
-    }
-  });
+    // 5. Write them into the specific folder
+    fs.writeFileSync(path.join(keysDir, 'private.pem'), privateKey);
+    fs.writeFileSync(path.join(keysDir, 'public.pem'), publicKey);
+
+    console.log(`🚀 Project ${projectName} created with unique security keys!`);
+  } catch (err) {
+    console.error('❌ Error during project creation:', err);
+  }
+});
 
 // --- COMMAND: GENERATE MODULE (g) ---
 program
-  .command("g <name>")
-  .alias("generate")
+  .command('g <name>')
+  .alias('generate')
   .action(async (moduleName) => {
-    const featureDir = path.join(
-      process.cwd(),
-      "src",
-      "app",
-      "feature-modules",
-    );
+    const featureDir = path.join(process.cwd(), 'src', 'app', 'feature-modules');
 
     if (!fs.existsSync(featureDir)) {
-      console.error(
-        "❌ Error: You must be in the root of your project to generate a module.",
-      );
+      console.error('❌ Error: You must be in the root of your project to generate a module.');
       return;
     }
     const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
@@ -77,13 +72,13 @@ program
     await fs.ensureDir(newModulePath);
 
     const files = [
-      "interface.ts",
-      "repo.ts",
-      "responses.ts",
-      "routes.ts",
-      "schema.ts",
-      "services.ts",
-      "validate.ts",
+      'interface.ts',
+      'repo.ts',
+      'responses.ts',
+      'routes.ts',
+      'schema.ts',
+      'services.ts',
+      'validate.ts',
     ];
 
     files.forEach((file) => {
@@ -93,13 +88,13 @@ program
       let content = `// Generated ${moduleName} ${file}\nexport {};`;
 
       // SPECIFIC LOGIC FOR INTERFACE FILE
-      if (file === "interface.ts") {
+      if (file === 'interface.ts') {
         content =
           `export interface ICreate${CapName} {\n\n}\n\n` +
           `export interface IUpdate${CapName} {\n\n}\n\n` +
           `export interface I${CapName} {\n\n}`;
       }
-      if (file === "schema.ts") {
+      if (file === 'schema.ts') {
         content = `import { BaseSchema } from "../../utility/base.schema.js";
 import type { I${CapName} } from "./${moduleName}.interface.js";
 import { model } from "mongoose";
@@ -112,7 +107,7 @@ export const ${moduleName}Model = model<I${CapName}>('${moduleName}', ${moduleNa
 `;
       }
 
-      if (file === "repo.ts") {
+      if (file === 'repo.ts') {
         content = `import type { ClientSession, PipelineStage, Types } from 'mongoose';
 import { ${moduleName}Model } from './${moduleName}.schema.js';
 import type { I${CapName}, ICreate${CapName}, IUpdate${CapName} } from './${moduleName}.interface.js';
@@ -157,7 +152,7 @@ export default {
 `;
       }
 
-      if (file === "services.ts") {
+      if (file === 'services.ts') {
         content = `import type { Types } from 'mongoose';
 import ${moduleName}Repo from './${moduleName}.repo.js';
 import type { I${CapName}, ICreate${CapName}, IUpdate${CapName} } from './${moduleName}.interface.js';
@@ -212,7 +207,7 @@ export default {
 };
 `;
       }
-      if(file === "validate.ts"){
+      if (file === 'validate.ts') {
         content = `
 import { z } from 'zod';
 
@@ -229,9 +224,9 @@ export const ${moduleName}Create = z.object({
 export const ${moduleName}Update = z.object({
   
 });
-`
+`;
       }
-      if(file === "routes.ts"){
+      if (file === 'routes.ts') {
         content = `import express from 'express';
 import ${moduleName}Services from './${moduleName}.services.js';
 import { ResponseHandler } from '../../utility/response.handler.js';
@@ -295,7 +290,7 @@ router.delete('/:id', async (req, res, next) => {
 });
 
 export default new Route('/${moduleName}', router);
-`
+`;
       }
 
       fs.writeFileSync(filePath, content);

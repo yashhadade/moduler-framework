@@ -12,6 +12,9 @@ To keep our production code stable, we follow a strict branching model:
 ## 🚀 How to Contribute
 
 ### 1. Fork and Clone
+
 Fork the repository to your own GitHub account and clone it locally:
+
 ```bash
 git clone https://github.com/yashhadade/moduler-framework.git
+```
