@@ -1,7 +1,7 @@
 {
-    "name": "moduler-framework",
-    "version": "1.0.0",
-    "bin": {
+  "name": "moduler-framework",
+  "version": "1.0.0",
+  "bin": {
     "moduler-framework": "./bin/cli.js"
   },
   "scripts": {
