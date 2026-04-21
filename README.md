@@ -3,12 +3,13 @@
 A powerful Node.js/TypeScript framework with built-in RSA key generation.
 
 ## How to use
+
 Run this to create a new project:
 `npx moduler-framework <project-name>`
 
 ## Generate a Module
-`npx moduler-framework g <module-name>`
 
+`npx moduler-framework g <module-name>`
 
 🚀 Modular Node.js Framework (MNF)
 A highly structured, production-ready Node.js & TypeScript framework designed for scalability. It comes pre-configured with a Feature-Module architecture, automated RSA security, and a robust utility suite.
@@ -28,11 +29,10 @@ Built-in CLI: Scaffolds projects and generates modules in seconds.
 You don't need to install this globally. Use npx to ensure you always have the latest version.
 
 1. Create a New Project
-Run the following command to scaffold a complete project:
+   Run the following command to scaffold a complete project:
 
 Bash
-npx moduler-framework <project-name>
-2. Add a New Feature Module
+npx moduler-framework <project-name> 2. Add a New Feature Module
 Navigate into your project folder and generate a new module (Interface, Repo, Services, Routes, etc.):
 
 Bash
@@ -43,15 +43,15 @@ Your project will be organized as follows:
 
 src/app/feature-modules/: The heart of your app. Each sub-folder contains:
 
-*.interface.ts: Data shapes and TypeScript interfaces.
+\*.interface.ts: Data shapes and TypeScript interfaces.
 
-*.repo.ts: Database logic and queries.
+\*.repo.ts: Database logic and queries.
 
-*.services.ts: Business logic and orchestration.
+\*.services.ts: Business logic and orchestration.
 
-*.routes.ts: API endpoint definitions.
+\*.routes.ts: API endpoint definitions.
 
-*.validate.ts: Request validation logic.
+\*.validate.ts: Request validation logic.
 
 src/app/utility/keys/: Stores your project's unique RSA keys. (Auto-generated)
 
@@ -119,6 +119,7 @@ A Rate Limiter.
 To keep the codebase clean, modular, and easy to scale, follow these strict boundaries:
 
 ### 1. Repository Layer Boundary
+
 A `*.repo.ts` file **must only be used by its own module's service**.
 
 - ✅ `user.repo.ts` → used only by `user.services.ts`
@@ -127,12 +128,14 @@ A `*.repo.ts` file **must only be used by its own module's service**.
 This ensures each module fully owns its database logic, and no other module can reach into its data layer directly.
 
 ### 2. Cross-Module Communication
+
 If one module needs data or behavior from another module, it **must go through the other module's service** — never its repository.
 
 - ✅ `auth.services.ts` → calls `user.services.ts`
 - ❌ `auth.services.ts` → calls `user.repo.ts`
 
 ### 3. Typical Flow
+
 ```
 Route  →  Validate  →  Service  →  Repo  →  Database
                           ↕
@@ -140,6 +143,7 @@ Route  →  Validate  →  Service  →  Repo  →  Database
 ```
 
 ### Why this matters
+
 - **Encapsulation:** Each module owns its data access logic.
 - **Refactoring safety:** Changing a repo only affects its own service.
 - **Testability:** Services can be mocked cleanly at module boundaries.
