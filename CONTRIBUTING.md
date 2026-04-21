@@ -59,19 +59,19 @@ All commits **must** follow the [Conventional Commits](https://www.conventionalc
 
 ### Allowed Types
 
-| Type       | Description                                                    |
-| ---------- | -------------------------------------------------------------- |
-| `feat`     | A new feature                                                  |
-| `fix`      | A bug fix                                                      |
-| `docs`     | Documentation-only changes                                     |
-| `style`    | Formatting, whitespace, semicolons (no code change)            |
-| `refactor` | Code change that neither fixes a bug nor adds a feature        |
-| `perf`     | Performance improvements                                       |
-| `test`     | Adding or updating tests                                       |
-| `build`    | Changes to build system or dependencies                        |
-| `ci`       | Changes to CI configuration files or scripts                   |
-| `chore`    | Other changes that don't modify `src` or `test` files          |
-| `revert`   | Reverts a previous commit                                      |
+| Type       | Description                                             |
+| ---------- | ------------------------------------------------------- |
+| `feat`     | A new feature                                           |
+| `fix`      | A bug fix                                               |
+| `docs`     | Documentation-only changes                              |
+| `style`    | Formatting, whitespace, semicolons (no code change)     |
+| `refactor` | Code change that neither fixes a bug nor adds a feature |
+| `perf`     | Performance improvements                                |
+| `test`     | Adding or updating tests                                |
+| `build`    | Changes to build system or dependencies                 |
+| `ci`       | Changes to CI configuration files or scripts            |
+| `chore`    | Other changes that don't modify `src` or `test` files   |
+| `revert`   | Reverts a previous commit                               |
 
 ### Rules
 
