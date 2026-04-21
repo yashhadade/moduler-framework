@@ -11,7 +11,5 @@ export const registerRoutes = (app: express.Application) => {
     app.use(route.path, tokenValidator(excludedPaths), route.router);
   }
 
-
-
   app.use(errorHandler);
 };

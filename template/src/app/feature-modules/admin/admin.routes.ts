@@ -3,7 +3,7 @@ import adminServices from './admin.services.js';
 import { ResponseHandler } from '../../utility/response.handler.js';
 import { ADMIN_RESPONSES } from './admin.responces.js';
 import { Route } from '../../routes/routes.types.js';
-import type { ICreateAdmin,ISetAdminPassword } from './admin.interface.js';
+import type { ICreateAdmin, ISetAdminPassword } from './admin.interface.js';
 import { validateBody } from '../../middleware/validateRequest.js';
 import { adminCreateSchema, adminSetPasswordSchema } from './admin.validate.js';
 import { Types } from 'mongoose';
@@ -18,8 +18,6 @@ router.get('/', async (_req, res, next) => {
     next(error);
   }
 });
-
-
 
 // Create a single admin
 router.post('/create', validateBody(adminCreateSchema), async (req, res, next) => {

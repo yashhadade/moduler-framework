@@ -38,13 +38,13 @@ export interface IAdminInfo {
   email: string;
   role: string;
   isActive: boolean;
-  password?: string | null|undefined;
+  password?: string | null | undefined;
 }
 
 export interface IAdmin {
   name: string;
   email: string;
-  role?: string|undefined;
-  isActive?: boolean|undefined;
-  password?: string | null|undefined;
+  role?: string | undefined;
+  isActive?: boolean | undefined;
+  password?: string | null | undefined;
 }

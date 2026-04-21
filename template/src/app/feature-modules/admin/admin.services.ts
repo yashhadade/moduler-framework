@@ -11,14 +11,14 @@ const create = async (adminData: ICreateAdmin) => {
     name: adminData.name,
     email: adminData.email.toLowerCase(),
     isActive: adminData.isActive,
-    password: await bcrypt.hash(adminData.password, 10)
+    password: await bcrypt.hash(adminData.password, 10),
   });
   return admin as IAdmin | null;
 };
 
 const find = async (filter: MongoFilter = {}) => {
   const admin = await adminRepo.find(filter);
-  return admin as unknown as IAdminInfo[]; 
+  return admin as unknown as IAdminInfo[];
 };
 
 const findLean = async (filter: MongoFilter = {}) => {
