@@ -23,6 +23,7 @@
     "@eslint/js": "^10.0.0",
     "eslint": "^10.0.0",
     "globals": "^17.3.0",
-    "prettier": "^3.8.1"
+    "prettier": "^3.8.1",
+    "eslint-plugin-boundaries": "^6.0.2"
   }
 }

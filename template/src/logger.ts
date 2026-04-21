@@ -5,7 +5,7 @@ const { combine, timestamp, printf, colorize, errors } = format;
 // Custom log format
 const logFormat = printf(({ timestamp, level, message, stack }) => {
   return stack
-    ? `${timestamp} [${level}]: ${message}\n${stack}`  // error with stack trace
+    ? `${timestamp} [${level}]: ${message}\n${stack}` // error with stack trace
     : `${timestamp} [${level}]: ${message}`;
 });
 
@@ -13,7 +13,7 @@ const logger: Logger = winston.createLogger({
   level: process.env.LOG_LEVEL || 'info',
   format: combine(
     timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-    errors({ stack: true }),   // capture stack traces on errors
+    errors({ stack: true }), // capture stack traces on errors
     logFormat
   ),
   transports: [

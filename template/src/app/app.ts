@@ -3,7 +3,6 @@ import { registerRoutes } from './routes/routes.js';
 import { connectToMongo } from './db.cache.connection/connection.mongo.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { connectToRedis } from './db.cache.connection/connection.redis.js';
 import { ResponseHandler } from './utility/response.handler.js';
 import logger from '../logger.js';
 const __filename = fileURLToPath(import.meta.url);

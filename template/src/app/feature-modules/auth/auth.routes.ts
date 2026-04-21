@@ -7,8 +7,6 @@ import type { IAdminLoginData } from './auth.interface.js';
 import { adminLoginSchema, refreshTokenSchema } from './auth.validate.js';
 const router = Router();
 
-
-
 router.post('/admin/login', validateBody(adminLoginSchema), async (req, res, next) => {
   try {
     const { usernameOrEmail, password } = req.body as IAdminLoginData;
