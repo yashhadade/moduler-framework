@@ -113,3 +113,34 @@ Security keys generated.
 A global Error Handler.
 
 A Rate Limiter.
+
+## 📐 How To Use This Framework (Architecture Rules)
+
+To keep the codebase clean, modular, and easy to scale, follow these strict boundaries:
+
+### 1. Repository Layer Boundary
+A `*.repo.ts` file **must only be used by its own module's service**.
+
+- ✅ `user.repo.ts` → used only by `user.services.ts`
+- ❌ `user.repo.ts` → used by `auth.services.ts` (not allowed)
+
+This ensures each module fully owns its database logic, and no other module can reach into its data layer directly.
+
+### 2. Cross-Module Communication
+If one module needs data or behavior from another module, it **must go through the other module's service** — never its repository.
+
+- ✅ `auth.services.ts` → calls `user.services.ts`
+- ❌ `auth.services.ts` → calls `user.repo.ts`
+
+### 3. Typical Flow
+```
+Route  →  Validate  →  Service  →  Repo  →  Database
+                          ↕
+                   (Other module's Service)
+```
+
+### Why this matters
+- **Encapsulation:** Each module owns its data access logic.
+- **Refactoring safety:** Changing a repo only affects its own service.
+- **Testability:** Services can be mocked cleanly at module boundaries.
+- **Scalability:** Modules can later be split into microservices with minimal changes.
