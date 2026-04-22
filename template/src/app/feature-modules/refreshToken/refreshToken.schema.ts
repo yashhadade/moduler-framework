@@ -1,6 +1,6 @@
 import { BaseSchema } from '../../utility/base.schema.js';
 import { model, Types } from 'mongoose';
-
+import { RefreshTokenStatus } from '../../utility/constant.js';
 const refreshTokenSchema = new BaseSchema({
   userId: {
     type: Types.ObjectId,
