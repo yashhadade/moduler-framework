@@ -97,7 +97,7 @@ Add Tags: In your package.json, add "keywords": ["nodejs", "framework", "typescr
 
 License: Ensure you have a "license": "MIT" (or similar) in your package.json so companies feel safe using it.
 
-Homepage: If you have a GitHub repo, add "homepage": "https://github.com/youruser/repo#readme".
+Homepage: If you have a GitHub repo, add "homepage": "https://github.com/yashhadade/moduler-framework.git".
 
 You are now 100% ready. Type npm publish and launch it!
 
