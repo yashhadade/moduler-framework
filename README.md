@@ -127,12 +127,28 @@ A `*.repo.ts` file **must only be used by its own module's service**.
 
 This ensures each module fully owns its database logic, and no other module can reach into its data layer directly.
 
-### 2. Cross-Module Communication
+### 2. Cross-Module Communication (Service-to-Service Only)
 
-If one module needs data or behavior from another module, it **must go through the other module's service** — never its repository.
+If one module needs data or behavior from another module, it **must communicate service-to-service only**. The service file is the **only public entry point** of a module. Every other file is considered private to that module.
+
+What another module **can** access:
+
+- ✅ `*.services.ts` — the single allowed entry point for cross-module communication
+
+What another module **must NOT** access:
+
+- ❌ `*.repo.ts` — repositories are private; only the owning service may use them
+- ❌ `*.routes.ts` — routes are HTTP-layer concerns and must never be imported or called by another module
+- ❌ `*.validate.ts`, `*.controller.ts`, or any other internal file
+
+Examples:
 
 - ✅ `auth.services.ts` → calls `user.services.ts`
 - ❌ `auth.services.ts` → calls `user.repo.ts`
+- ❌ `auth.services.ts` → imports from `user.routes.ts`
+- ❌ `order.controller.ts` → calls `payment.repo.ts`
+
+**Rule of thumb:** If Module A needs something from Module B, it calls `B.services.ts`. Nothing else. Ever.
 
 ### 3. Typical Flow
 
