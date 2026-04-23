@@ -56,11 +56,11 @@ The generator auto-detects the project's DB type and scaffolds the right module 
 
 You can also force a specific flavor anywhere:
 
-| Command | Behavior |
-|---|---|
+| Command                          | Behavior                                                    |
+| -------------------------------- | ----------------------------------------------------------- |
 | `npx moduler-framework g <name>` | **Auto-detect** DB type from `.moduler.json`, then scaffold |
-| `npx moduler-framework m <name>` | Always generate a **MongoDB (Mongoose)** module |
-| `npx moduler-framework p <name>` | Always generate a **PostgreSQL (TypeORM)** module |
+| `npx moduler-framework m <name>` | Always generate a **MongoDB (Mongoose)** module             |
+| `npx moduler-framework p <name>` | Always generate a **PostgreSQL (TypeORM)** module           |
 
 Each module creates:
 
@@ -183,7 +183,7 @@ Route  →  Validate  →  Service  →  Repo  →  Database
 
 Running `npx moduler-framework <name>` gives you:
 
-- A live **MongoDB** *or* **PostgreSQL** connection script (based on your choice)
+- A live **MongoDB** _or_ **PostgreSQL** connection script (based on your choice)
 - A live **Redis** connection script
 - Auto-generated RSA security keys
 - A global error handler
