@@ -1,4 +1,4 @@
-import type { Types } from 'mongoose';
+import type { ObjectId } from 'typeorm';
 
 export interface ICreateAdmin {
   name: string;
@@ -22,12 +22,13 @@ export interface IUpdateAdmin {
 }
 
 export interface IAggregateResult {
-  _id: string;
+  id: string;
   name: string;
   email: string;
   role: string;
   isActive: boolean;
 }
+
 
 export interface IAdmin {
   name: string;
@@ -38,5 +39,6 @@ export interface IAdmin {
 }
 
 export interface IAdminInfo extends IAdmin {
-  _id: Types.ObjectId;
+  id: string;
 }
+
