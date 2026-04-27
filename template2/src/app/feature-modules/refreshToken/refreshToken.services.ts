@@ -1,16 +1,19 @@
-import type { Types } from 'mongoose';
 import crypto from 'crypto';
+import dotenv from 'dotenv';
 import refreshTokenRepo from './refreshToken.repo.js';
 import { RefreshTokenStatus } from '../../utility/constant.js';
-import dotenv from 'dotenv';
+
 dotenv.config();
 
 const REFRESH_TOKEN_EXPIRY = process.env.REFRESH_TOKEN_EXPIRY || 7;
 
-const createToken = async (userId: string | Types.ObjectId, role: string) => {
+const createToken = async (userId: string, role: string) => {
   const token = crypto.randomBytes(40).toString('hex');
   const expiresAt = new Date(Date.now() + Number(REFRESH_TOKEN_EXPIRY) * 24 * 60 * 60 * 1000);
-
+  await refreshTokenRepo.updateMany(
+    { userId, status: RefreshTokenStatus.ACTIVE },
+    { isDeleted: true }
+  );
   const doc = await refreshTokenRepo.create({
     userId,
     role,
@@ -19,27 +22,18 @@ const createToken = async (userId: string | Types.ObjectId, role: string) => {
     expiresAt,
   });
 
-  return { token, expiresAt, _id: doc._id };
+  return { token, expiresAt, id: doc.id };
 };
 
-const findByToken = async (token: string) => {
-  return refreshTokenRepo.findOne({ token }) as Promise<{
-    _id: Types.ObjectId;
-    userId: Types.ObjectId;
-    role: string;
-    token: string;
-    status: string;
-    expiresAt: Date;
-  } | null>;
-};
+const findByToken = (token: string) => refreshTokenRepo.findOne({ token });
 
-const revoke = (tokenId: string | Types.ObjectId) =>
-  refreshTokenRepo.update({ _id: tokenId }, { status: RefreshTokenStatus.REVOKED });
+const revoke = (tokenId: string) =>
+  refreshTokenRepo.update(tokenId, { status: RefreshTokenStatus.REVOKED });
 
 const revokeByTokenString = (token: string) =>
-  refreshTokenRepo.update({ token }, { status: RefreshTokenStatus.REVOKED });
+  refreshTokenRepo.updateMany({ token }, { status: RefreshTokenStatus.REVOKED });
 
-const revokeAllForUser = (userId: string | Types.ObjectId) =>
+const revokeAllForUser = (userId: string) =>
   refreshTokenRepo.updateMany(
     { userId, status: RefreshTokenStatus.ACTIVE },
     { status: RefreshTokenStatus.REVOKED }

@@ -6,7 +6,6 @@ import { Route } from '../../routes/routes.types.js';
 import type { ICreateAdmin, ISetAdminPassword } from './admin.interface.js';
 import { validateBody } from '../../middleware/validateRequest.js';
 import { adminCreateSchema, adminSetPasswordSchema } from './admin.validate.js';
-import { Types } from 'mongoose';
 const router = express.Router();
 
 // Get all WhiteBox admins
@@ -53,7 +52,7 @@ router.post('/setAdminPassword', validateBody(adminSetPasswordSchema), async (re
 
 router.get('/getCurrentUser', async (req, res, next) => {
   try {
-    const user = await adminServices.findOneLean({ _id: new Types.ObjectId(res.locals.userId) });
+    const user = await adminServices.findOneLean({ id: res.locals.userId as string });
     if (!user) throw ADMIN_RESPONSES.ADMIN_NOT_FOUND;
     res.send(new ResponseHandler(user));
   } catch (error) {

@@ -30,4 +30,3 @@ const refreshTokenSchema = new BaseSchema({
 });
 
 export const refreshTokenModel = model('RefreshToken', refreshTokenSchema);
-export { RefreshTokenStatus };

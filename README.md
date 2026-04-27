@@ -1,129 +1,141 @@
-# My Modular Framework
+# Modular Node.js Framework (MNF)
 
-A powerful Node.js/TypeScript framework with built-in RSA key generation.
+A highly structured, production-ready **Node.js + TypeScript** framework designed for scalability. It ships with a **Feature-Module architecture**, automated RSA security, and first-class support for **both MongoDB (Mongoose) and PostgreSQL (TypeORM)** — pick the database when you create the project, and the CLI takes care of the rest.
 
-## How to use
+---
 
-Run this to create a new project:
-`npx moduler-framework <project-name>`
+## Key Features
 
-## Generate a Module
+- **Dual-DB support:** pick MongoDB (Mongoose) or PostgreSQL (TypeORM) at project creation.
+- **Feature-Module pattern:** code is organized by business domain (User, Admin, Auth) rather than by technical role.
+- **Auto DB detection:** the `g` generator reads the project's `.moduler.json` and scaffolds the correct flavor of module — no flags needed.
+- **Automated RSA security:** unique 2048-bit `private.pem` / `public.pem` keys are generated for every new project.
+- **Strict TypeScript:** pre-configured `tsconfig.json` for type safety.
+- **Standardized responses:** built-in `ResponseHandler` utility for consistent API responses.
+- **Batteries included:** pre-wired error handler, rate limiter, logger, JWT middleware, Redis cache, and more.
 
-`npx moduler-framework g <module-name>`
+---
 
-🚀 Modular Node.js Framework (MNF)
-A highly structured, production-ready Node.js & TypeScript framework designed for scalability. It comes pre-configured with a Feature-Module architecture, automated RSA security, and a robust utility suite.
+## Installation & Usage
 
-🛠️ Key Features
-Feature-Module Pattern: Organizes code by business logic (e.g., User, Admin, Auth) rather than technical role.
+You do **not** need to install this globally. Use `npx` to always get the latest version.
 
-Automated RSA Security: Generates unique private.pem and public.pem keys for every new project.
+### 1. Create a new project
 
-Strict TypeScript: Pre-configured tsconfig.json for type safety.
+```bash
+npx moduler-framework <project-name>
+```
 
-Standardized Responses: Built-in utility for consistent API responses.
+You will be prompted to choose a database:
 
-Built-in CLI: Scaffolds projects and generates modules in seconds.
+```
+? Which database do you want to use?
+  > MongoDB (Mongoose)
+    PostgreSQL (TypeORM)
+```
 
-📥 Installation & Usage
-You don't need to install this globally. Use npx to ensure you always have the latest version.
+Or skip the prompt with a flag:
 
-1. Create a New Project
-   Run the following command to scaffold a complete project:
+```bash
+npx moduler-framework my-api --mongo
+npx moduler-framework my-api --postgres
+```
 
-Bash
-npx moduler-framework <project-name> 2. Add a New Feature Module
-Navigate into your project folder and generate a new module (Interface, Repo, Services, Routes, etc.):
+This scaffolds the project, generates unique RSA keys, and writes a `.moduler.json` marker at the project root so future commands know which DB to use.
 
-Bash
-cd <project-name>
+### 2. Generate a feature module
+
+Inside a generated project:
+
+```bash
+cd my-api
 npx moduler-framework g <module-name>
-📂 Project Structure Explained
-Your project will be organized as follows:
+```
 
-src/app/feature-modules/: The heart of your app. Each sub-folder contains:
+The generator auto-detects the project's DB type and scaffolds the right module (Mongoose schema/repo or TypeORM entity/repo).
 
-\*.interface.ts: Data shapes and TypeScript interfaces.
+You can also force a specific flavor anywhere:
 
-\*.repo.ts: Database logic and queries.
+| Command                          | Behavior                                                    |
+| -------------------------------- | ----------------------------------------------------------- |
+| `npx moduler-framework g <name>` | **Auto-detect** DB type from `.moduler.json`, then scaffold |
+| `npx moduler-framework m <name>` | Always generate a **MongoDB (Mongoose)** module             |
+| `npx moduler-framework p <name>` | Always generate a **PostgreSQL (TypeORM)** module           |
 
-\*.services.ts: Business logic and orchestration.
+Each module creates:
 
-\*.routes.ts: API endpoint definitions.
+- `*.interface.ts` – data shapes and TypeScript interfaces
+- `*.schema.ts` – Mongoose schema **or** TypeORM entity (depending on DB)
+- `*.repo.ts` – database access layer
+- `*.services.ts` – business logic and orchestration
+- `*.routes.ts` – Express routes wired through `validateBody`
+- `*.validate.ts` – Zod validation schemas
+- `*.responses.ts` – module-scoped response/error constants
 
-\*.validate.ts: Request validation logic.
+---
 
-src/app/utility/keys/: Stores your project's unique RSA keys. (Auto-generated)
+## Project Structure
 
-src/app/middleware/: Custom middlewares like auth, errorHandler, and rateLimiter.
+```
+src/
+  app/
+    feature-modules/         # Your business modules (user, admin, auth, ...)
+      <module>/
+        <module>.interface.ts
+        <module>.schema.ts
+        <module>.repo.ts
+        <module>.services.ts
+        <module>.routes.ts
+        <module>.validate.ts
+        <module>.responses.ts
+    db.cache.connection/     # Mongo/Postgres + Redis connection setup
+    middleware/               # app middlewares (auth, errorHandler, rateLimiter, ...)
+    routes/                   # Route registry and types
+    utility/
+      keys/                   # Auto-generated RSA keys (unique per project)
+      base.schema.ts          # Mongoose BaseSchema   (MongoDB projects)
+      base.entity.ts          # TypeORM  BaseEntity   (PostgreSQL projects)
+  index.ts
+scripts/                      # copy-keys.js and friends
+.moduler.json                 # Marker file: { "db": "mongodb" | "postgres" }
+```
 
-scripts/: Automation scripts (e.g., copy-keys.js).
+---
 
-🔐 Security & Keys
-Upon creation, the framework generates a 2048-bit RSA key pair in src/app/utility/keys/.
+## Security & Keys
 
-Private Key: Used for signing JWTs or encrypting sensitive data.
+On creation, the framework generates a **2048-bit RSA key pair** in `src/app/utility/keys/`:
 
-Public Key: Used for verifying signatures.
+- **Private key** – used for signing JWTs or encrypting sensitive data.
+- **Public key** – used for verifying signatures.
 
-Note: These keys are unique to every project. Never share your private.pem file.
+These keys are unique to every project. **Never commit or share your `private.pem`.**
 
-🚀 Getting Started with Development
-Once the project is created:
+---
 
-Install dependencies:
+## Getting Started with Development
 
-Bash
+After the project is generated:
+
+```bash
+cd <project-name>
 npm install
-Configure your environment:
-
-Bash
-cp .env.sample .env
-Run in development mode:
-
-Bash
+cp .env.sample .env     # configure your environment
 npm run dev
-🤝 Contributing
-If you want to suggest improvements to the template or the CLI logic:
+```
 
-Fork the repository.
+---
 
-Create your feature branch.
+## Architecture Rules
 
-Submit a Pull Request.
-
-Tips for your NPM Page:
-Add Tags: In your package.json, add "keywords": ["nodejs", "framework", "typescript", "modular", "cli"]. This helps people find it.
-
-License: Ensure you have a "license": "MIT" (or similar) in your package.json so companies feel safe using it.
-
-Homepage: If you have a GitHub repo, add "homepage": "https://github.com/youruser/repo#readme".
-
-You are now 100% ready. Type npm publish and launch it!
-
-⚡ The "One-Command" Power
-By running npx moduler-framework <name>, the user gets:
-
-A live MongoDB connection script.
-
-A live Redis connection script.
-
-Security keys generated.
-
-A global Error Handler.
-
-A Rate Limiter.
-
-## 📐 How To Use This Framework (Architecture Rules)
-
-To keep the codebase clean, modular, and easy to scale, follow these strict boundaries:
+To keep the codebase clean, modular, and easy to scale, follow these strict boundaries.
 
 ### 1. Repository Layer Boundary
 
 A `*.repo.ts` file **must only be used by its own module's service**.
 
-- ✅ `user.repo.ts` → used only by `user.services.ts`
-- ❌ `user.repo.ts` → used by `auth.services.ts` (not allowed)
+- `user.repo.ts` used only by `user.services.ts`
+- `user.repo.ts` used by `auth.services.ts` is **not** allowed
 
 This ensures each module fully owns its database logic, and no other module can reach into its data layer directly.
 
@@ -133,20 +145,20 @@ If one module needs data or behavior from another module, it **must communicate 
 
 What another module **can** access:
 
-- ✅ `*.services.ts` — the single allowed entry point for cross-module communication
+- `*.services.ts` — the single allowed entry point for cross-module communication
 
 What another module **must NOT** access:
 
-- ❌ `*.repo.ts` — repositories are private; only the owning service may use them
-- ❌ `*.routes.ts` — routes are HTTP-layer concerns and must never be imported or called by another module
-- ❌ `*.validate.ts`, `*.controller.ts`, or any other internal file
+- `*.repo.ts` — repositories are private; only the owning service may use them
+- `*.routes.ts` — routes are HTTP-layer concerns and must never be imported or called by another module
+- `*.validate.ts`, `*.controller.ts`, or any other internal file
 
 Examples:
 
-- ✅ `auth.services.ts` → calls `user.services.ts`
-- ❌ `auth.services.ts` → calls `user.repo.ts`
-- ❌ `auth.services.ts` → imports from `user.routes.ts`
-- ❌ `order.controller.ts` → calls `payment.repo.ts`
+- `auth.services.ts` → calls `user.services.ts` — allowed
+- `auth.services.ts` → calls `user.repo.ts` — not allowed
+- `auth.services.ts` → imports from `user.routes.ts` — not allowed
+- `order.controller.ts` → calls `payment.repo.ts` — not allowed
 
 **Rule of thumb:** If Module A needs something from Module B, it calls `B.services.ts`. Nothing else. Ever.
 
@@ -164,3 +176,49 @@ Route  →  Validate  →  Service  →  Repo  →  Database
 - **Refactoring safety:** Changing a repo only affects its own service.
 - **Testability:** Services can be mocked cleanly at module boundaries.
 - **Scalability:** Modules can later be split into microservices with minimal changes.
+
+---
+
+## What You Get Out of the Box
+
+Running `npx moduler-framework <name>` gives you:
+
+- A live **MongoDB** _or_ **PostgreSQL** connection script (based on your choice)
+- A live **Redis** connection script
+- Auto-generated RSA security keys
+- A global error handler
+- A request rate limiter
+- JWT token validation middleware
+- Zod-based request validation
+- A standardized response handler
+
+---
+
+## Contributing
+
+If you want to suggest improvements to the template or the CLI logic:
+
+1. Fork the repository.
+2. Create a feature branch.
+3. Submit a Pull Request.
+
+---
+
+## Quick Reference
+
+```bash
+# Create a MongoDB project (prompted)
+npx moduler-framework shop-api
+
+# Create a PostgreSQL project (no prompt)
+npx moduler-framework shop-api --postgres
+
+# Inside the project: auto-detects DB from .moduler.json
+npx moduler-framework g product
+
+# Force MongoDB flavor
+npx moduler-framework m order
+
+# Force PostgreSQL flavor
+npx moduler-framework p invoice
+```
