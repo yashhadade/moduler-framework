@@ -26,10 +26,10 @@ const AdminLogin = async (usernameOrEmail: string, password: string) => {
   const isPasswordValid = await bcrpt.compare(password, admin.password as string);
   if (!isPasswordValid) throw AUTH_RESPONSES.INVALID_CREDENTIALS;
   const accessToken = generateAccessToken({
-    id: admin._id as string,
+    id: String(admin._id),
     role: Role.ADMIN,
   });
-  const refreshToken = await refreshTokenServices.createToken(admin._id as string, Role.ADMIN);
+  const refreshToken = await refreshTokenServices.createToken(admin._id, Role.ADMIN);
   return {
     accessToken,
     refreshToken: refreshToken.token,

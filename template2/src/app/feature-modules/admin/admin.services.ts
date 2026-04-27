@@ -19,24 +19,24 @@ const create = async (adminData: ICreateAdmin) => {
 
 type QueryOpts = { withDeleted?: boolean };
 
-const find = async (filter: AdminWhere = {}, opts?: QueryOpts) => {
+const find = async (filter: AdminWhere = {}, opts?: QueryOpts): Promise<IAdminInfo[]> => {
   const admin = await adminRepo.find(filter, opts);
-  return admin as unknown as IAdminInfo[];
+  return admin;
 };
 
-const findLean = async (filter: AdminWhere = {}, opts?: QueryOpts) => {
+const findLean = async (filter: AdminWhere = {}, opts?: QueryOpts): Promise<IAdminInfo[]> =>  {
   const admin = await adminRepo.find(filter, opts);
-  return admin as unknown as IAdminInfo[];
+  return admin;
 };
 
-const findOne = async (filter: AdminWhere = {}, opts?: QueryOpts) => {
+const findOne = async (filter: AdminWhere = {}, opts?: QueryOpts): Promise<IAdminInfo | null> => {
   const admin = await adminRepo.findOne(filter, opts);
-  return admin as unknown as IAdminInfo | null;
+  return admin;
 };
 
-const findOneLean = async (filter: AdminWhere = {}, opts?: QueryOpts) => {
+const findOneLean = async (filter: AdminWhere = {}, opts?: QueryOpts): Promise<IAdminInfo | null> => {
   const admin = await adminRepo.findOne(filter, opts);
-  return admin as unknown as IAdminInfo | null;
+  return admin;
 };
 
 const update = async (id: string, updateData: IUpdateAdmin) => {
