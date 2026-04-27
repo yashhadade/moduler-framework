@@ -6,7 +6,7 @@ const path = require('path');
 const inquirer = require('inquirer');
 const crypto = require('crypto');
 
-program.version('1.0.0').description('My Custom Node.js Framework CLI');
+program.version('1.1.0').description('My Custom Node.js Framework CLI');
 
 const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
