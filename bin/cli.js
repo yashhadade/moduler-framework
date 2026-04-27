@@ -423,39 +423,39 @@ const create = async (${moduleName}Data: ICreate${CapName}) => {
   const ${moduleName} = await ${moduleName}Repo.create({
     ...${moduleName}Data,
   });
-  return ${moduleName} as unknown as I${CapName};
+  return ${moduleName} as I${CapName} | null;
 };
 
 const find = async (filter: ${CapName}Where = {}, opts?: QueryOpts) => {
   const ${moduleName} = await ${moduleName}Repo.find(filter, opts);
-  return ${moduleName} as unknown as I${CapName}Info[];
+  return ${moduleName} as I${CapName}Info[];
 };
 
 const findLean = async (filter: ${CapName}Where = {}, opts?: QueryOpts) => {
   const ${moduleName} = await ${moduleName}Repo.find(filter, opts);
-  return ${moduleName} as unknown as I${CapName}Info[];
+  return ${moduleName} as I${CapName}Info[];
 };
 
 const findOne = async (filter: ${CapName}Where = {}, opts?: QueryOpts) => {
   const ${moduleName} = await ${moduleName}Repo.findOne(filter, opts);
-  return ${moduleName} as unknown as I${CapName}Info | null;
+  return ${moduleName} as I${CapName}Info | null;
 };
 
 const findOneLean = async (filter: ${CapName}Where = {}, opts?: QueryOpts) => {
   const ${moduleName} = await ${moduleName}Repo.findOne(filter, opts);
-  return ${moduleName} as unknown as I${CapName}Info | null;
+  return ${moduleName} as I${CapName}Info | null;
 };
 
 const update = async (id: string, updateData: IUpdate${CapName}) => {
   await ${moduleName}Repo.update(id, updateData);
   const ${moduleName} = await ${moduleName}Repo.findOne({ id });
-  return ${moduleName} as unknown as I${CapName} | null;
+  return ${moduleName} as I${CapName} | null;
 };
 
 const remove = async (id: string) => {
   await ${moduleName}Repo.remove(id);
   const ${moduleName} = await ${moduleName}Repo.findOne({ id });
-  return ${moduleName} as unknown as I${CapName} | null;
+  return ${moduleName} as I${CapName} | null;
 };
 
 export default {

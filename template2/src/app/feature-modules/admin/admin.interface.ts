@@ -1,3 +1,5 @@
+import type { ObjectId } from 'typeorm';
+
 export interface ICreateAdmin {
   name: string;
   email: string;
@@ -19,11 +21,6 @@ export interface IUpdateAdmin {
   role?: string | undefined;
 }
 
-// export interface Admin extends CreateAdminData {
-//   id: string;
-//   password: string | null;
-// }
-
 export interface IAggregateResult {
   id: string;
   name: string;
@@ -32,14 +29,6 @@ export interface IAggregateResult {
   isActive: boolean;
 }
 
-export interface IAdminInfo {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-  isActive: boolean;
-  password?: string | null | undefined;
-}
 
 export interface IAdmin {
   name: string;
@@ -48,3 +37,8 @@ export interface IAdmin {
   isActive?: boolean | undefined;
   password?: string | null | undefined;
 }
+
+export interface IAdminInfo extends IAdmin {
+  id: string;
+}
+

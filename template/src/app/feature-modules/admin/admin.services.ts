@@ -16,24 +16,24 @@ const create = async (adminData: ICreateAdmin) => {
   return admin as IAdmin | null;
 };
 
-const find = async (filter: MongoFilter = {}) => {
+const find = async (filter: MongoFilter = {}): Promise<IAdminInfo[]> => {
   const admin = await adminRepo.find(filter);
-  return admin as unknown as IAdminInfo[];
+  return admin;
 };
 
-const findLean = async (filter: MongoFilter = {}) => {
+const findLean = async (filter: MongoFilter = {}): Promise<IAdminInfo[]> => {
   const admin = await adminRepo.findLean(filter);
-  return admin as unknown as IAdminInfo[];
+  return admin;
 };
 
-const findOne = async (filter: MongoFilter = {}) => {
+const findOne = async (filter: MongoFilter = {}): Promise<IAdminInfo | null> => {
   const admin = await adminRepo.findOne(filter);
-  return admin as unknown as IAdminInfo | null;
+  return admin;
 };
 
-const findOneLean = async (filter: MongoFilter = {}) => {
+const findOneLean = async (filter: MongoFilter = {}): Promise<IAdminInfo | null> => {
   const admin = await adminRepo.findOneLean(filter);
-  return admin as unknown as IAdminInfo | null;
+  return admin;
 };
 
 const update = async (id: string | Types.ObjectId, updateData: Record<string, unknown>) => {

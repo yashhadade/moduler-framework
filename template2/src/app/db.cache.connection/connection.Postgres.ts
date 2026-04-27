@@ -1,8 +1,10 @@
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 import logger from '../../logger.js';
-import { Admin } from '../feature-modules/admin/admin.schema.js';
-import { RefreshToken } from '../feature-modules/refreshToken/refreshToken.schema.js';
+import { fileURLToPath } from 'url';
+import path from 'path';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 let _dataSource: DataSource | null = null;
 
@@ -14,9 +16,9 @@ const buildDataSource = () => {
   return new DataSource({
     type: 'postgres',
     url,
-    entities: [Admin, RefreshToken],
-    synchronize: true, // dev only — auto-creates tables
-    migrations: [],
+    entities: [__dirname + '/../feature-modules/**/*.schema.{ts,js}'],
+    synchronize: false, // dev only — auto-creates tables
+    migrations: [__dirname + "/migrations/*.ts"], // Where migrations will be saved
     migrationsRun: true,
     logging: false,
   });

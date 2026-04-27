@@ -13,7 +13,11 @@
     "start:watch": "nodemon",
     "start:dev": "nodemon --watch src --ext ts,json --exec \"npm run build && node dist/index.js\"",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "typeorm": "tsx --env-file=.env ./node_modules/typeorm/cli.js",
+    "migration:generate": "npm run typeorm -- migration:generate -d ./src/app/db.cache.connection/datasource.cli.ts",
+    "migration:run": "npm run typeorm -- migration:run -d ./src/app/db.cache.connection/datasource.cli.ts",
+    "migration:revert": "npm run typeorm -- migration:revert -d ./src/app/db.cache.connection/datasource.cli.ts"
   },
   "keywords": [],
   "author": "",
