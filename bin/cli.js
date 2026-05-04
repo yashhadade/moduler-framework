@@ -145,27 +145,27 @@ export const ${moduleName}Model = model<I${CapName}>('${moduleName}', ${moduleNa
   }
 
   if (file === 'repo.ts') {
-    return `import type { ClientSession, PipelineStage, Types } from 'mongoose';
+    return `import type { ClientSession, PipelineStage, Types,QueryFilter } from 'mongoose';
 import { ${moduleName}Model } from './${moduleName}.schema.js';
 import type { I${CapName}, ICreate${CapName}, IUpdate${CapName} } from './${moduleName}.interface.js';
 
-type MongoFilter = Record<string, unknown>;
+type MongoFilter = QueryFilter<I${CapName}>;
 type UpdateOpts = NonNullable<Parameters<typeof ${moduleName}Model.updateOne>[2]>;
 
 const create = (data: ICreate${CapName}, session?: ClientSession) =>
   ${moduleName}Model.create([data as ICreate${CapName}], session ? { session } : {}).then((docs) => docs[0]);
 
 const find = (filter: MongoFilter = {}) =>
-  ${moduleName}Model.find(filter as I${CapName});
+  ${moduleName}Model.find(filter);
 
 const findLean = (filter: MongoFilter = {}) =>
-  ${moduleName}Model.find(filter as I${CapName}).lean();
+  ${moduleName}Model.find(filter).lean();
 
 const findOne = (filter: MongoFilter = {}) =>
-  ${moduleName}Model.findOne(filter as I${CapName});
+  ${moduleName}Model.findOne(filter);
 
 const findOneLean = (filter: MongoFilter = {}) =>
-  ${moduleName}Model.findOne(filter as I${CapName}).lean();
+  ${moduleName}Model.findOne(filter).lean();
 
 const update = (id: string | Types.ObjectId, data: IUpdate${CapName}, options?: UpdateOpts) =>
   ${moduleName}Model.updateOne({ _id: id }, data, options);
