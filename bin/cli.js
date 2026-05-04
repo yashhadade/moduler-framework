@@ -6,7 +6,7 @@ const path = require('path');
 const inquirer = require('inquirer');
 const crypto = require('crypto');
 
-program.version('1.0.0').description('My Custom Node.js Framework CLI');
+program.version('1.1.1').description('My Custom Node.js Framework CLI');
 
 const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
@@ -300,8 +300,15 @@ router.post('/', validateBody(${moduleName}Create), async (req, res, next) => {
 // Update a ${moduleName}
 router.patch('/:id', validateBody(${moduleName}Update), async (req, res, next) => {
     try {
-        const {} = req.body as IUpdate${CapName};
-      const ${moduleName} = await ${moduleName}Services.update(req.params.id as string | Types.ObjectId, {});
+       const id = req.params.id;
+        if (typeof id !== 'string' || !id) {
+          throw new Error('${moduleName} ID is required');
+        }
+        const updateData = req.body as IUpdate${CapName};  
+      const ${moduleName} = await ${moduleName}Services.update( 
+        new Types.ObjectId(id),
+        updateData as IUpdate${CapName}
+      );
       res.send(new ResponseHandler(${moduleName}));
     } catch (error) {
       next(error);
