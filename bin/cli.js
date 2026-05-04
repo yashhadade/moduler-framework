@@ -6,7 +6,7 @@ const path = require('path');
 const inquirer = require('inquirer');
 const crypto = require('crypto');
 
-program.version('1.1.0').description('My Custom Node.js Framework CLI');
+program.version('1.1.1').description('My Custom Node.js Framework CLI');
 
 const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
@@ -145,27 +145,27 @@ export const ${moduleName}Model = model<I${CapName}>('${moduleName}', ${moduleNa
   }
 
   if (file === 'repo.ts') {
-    return `import type { ClientSession, PipelineStage, Types } from 'mongoose';
+    return `import type { ClientSession, PipelineStage, Types,QueryFilter } from 'mongoose';
 import { ${moduleName}Model } from './${moduleName}.schema.js';
 import type { I${CapName}, ICreate${CapName}, IUpdate${CapName} } from './${moduleName}.interface.js';
 
-type MongoFilter = Record<string, unknown>;
+type MongoFilter = QueryFilter<I${CapName}>;
 type UpdateOpts = NonNullable<Parameters<typeof ${moduleName}Model.updateOne>[2]>;
 
 const create = (data: ICreate${CapName}, session?: ClientSession) =>
   ${moduleName}Model.create([data as ICreate${CapName}], session ? { session } : {}).then((docs) => docs[0]);
 
 const find = (filter: MongoFilter = {}) =>
-  ${moduleName}Model.find(filter as I${CapName});
+  ${moduleName}Model.find(filter);
 
 const findLean = (filter: MongoFilter = {}) =>
-  ${moduleName}Model.find(filter as I${CapName}).lean();
+  ${moduleName}Model.find(filter).lean();
 
 const findOne = (filter: MongoFilter = {}) =>
-  ${moduleName}Model.findOne(filter as I${CapName});
+  ${moduleName}Model.findOne(filter);
 
 const findOneLean = (filter: MongoFilter = {}) =>
-  ${moduleName}Model.findOne(filter as I${CapName}).lean();
+  ${moduleName}Model.findOne(filter).lean();
 
 const update = (id: string | Types.ObjectId, data: IUpdate${CapName}, options?: UpdateOpts) =>
   ${moduleName}Model.updateOne({ _id: id }, data, options);
@@ -300,8 +300,15 @@ router.post('/', validateBody(${moduleName}Create), async (req, res, next) => {
 // Update a ${moduleName}
 router.patch('/:id', validateBody(${moduleName}Update), async (req, res, next) => {
     try {
-        const {} = req.body as IUpdate${CapName};
-      const ${moduleName} = await ${moduleName}Services.update(req.params.id as string | Types.ObjectId, {});
+       const id = req.params.id;
+        if (typeof id !== 'string' || !id) {
+          throw new Error('${moduleName} ID is required');
+        }
+        const updateData = req.body as IUpdate${CapName};  
+      const ${moduleName} = await ${moduleName}Services.update( 
+        new Types.ObjectId(id),
+        updateData as IUpdate${CapName}
+      );
       res.send(new ResponseHandler(${moduleName}));
     } catch (error) {
       next(error);
