@@ -658,7 +658,9 @@ const generateModule = (moduleName, dbType) => {
   const dbLabel = dbType === DB_TYPES.POSTGRES ? 'PostgreSQL (TypeORM)' : 'MongoDB (Mongoose)';
   console.log(`✅ Module "${moduleName}" generated for ${dbLabel}.`);
   if (fs.existsSync(path.join(featureDir, 'routes.index.ts'))) {
-    console.log('   Routes registered in feature-modules/routes.index.ts and app/routes/routes.data.ts.');
+    console.log(
+      '   Routes registered in feature-modules/routes.index.ts and app/routes/routes.data.ts.'
+    );
   }
 };
 

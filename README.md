@@ -129,11 +129,11 @@ In `src/app/routes/routes.ts`, each feature router is mounted with **`tokenValid
 
 **Exports from `token.validate.ts`:**
 
-| Export            | Purpose |
-| ----------------- | ------- |
-| `tokenValidator`  | Curried middleware factory: `(excludedPaths) => (req, res, next) => …` |
-| `ExcludedPath`    | Helper class: `new ExcludedPath(url, method)` — `method` is stored uppercased |
-| `AppError`        | Error type with `statusCode`; used by auth and rate limiting |
+| Export           | Purpose                                                                       |
+| ---------------- | ----------------------------------------------------------------------------- |
+| `tokenValidator` | Curried middleware factory: `(excludedPaths) => (req, res, next) => …`        |
+| `ExcludedPath`   | Helper class: `new ExcludedPath(url, method)` — `method` is stored uppercased |
+| `AppError`       | Error type with `statusCode`; used by auth and rate limiting                  |
 
 ### Role-based access (`roleValidator.ts`)
 
@@ -143,7 +143,7 @@ In `src/app/routes/routes.ts`, each feature router is mounted with **`tokenValid
 - If the user’s role is **not** in the allow-list, the client gets **`403`** with a JSON body: `FORBIDDEN_ACCESS` and a clear message.
 - **Typical usage:** mount or apply `roleValidator([Role.ADMIN, …])` on routers or individual routes **after** the stack that runs `tokenValidator`, or only on subpaths that are never excluded from auth.
 
-*(The template ships this middleware ready to use; wire it into specific `*.routes.ts` files when you need admin-only or role-specific endpoints.)*
+_(The template ships this middleware ready to use; wire it into specific `_.routes.ts` files when you need admin-only or role-specific endpoints.)\*
 
 ### Rate limiting (`rateLimiter.ts`)
 
