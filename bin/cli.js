@@ -6,9 +6,60 @@ const path = require('path');
 const inquirer = require('inquirer');
 const crypto = require('crypto');
 
-program.version('1.1.1').description('My Custom Node.js Framework CLI');
+program.version('1.1.2').description('My Custom Node.js Framework CLI');
 
 const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
+
+/** e.g. my-feature -> myFeatureRoutes */
+const moduleNameToRoutesKey = (name) =>
+  name.replace(/-([a-z])/g, (_, c) => c.toUpperCase()) + 'Routes';
+
+/** Append feature router to routes.index.ts and routes.data.ts (idempotent). */
+const wireModuleRoutes = (featureDir, moduleName) => {
+  const routesKey = moduleNameToRoutesKey(moduleName);
+  const importPath = `./${moduleName}/${moduleName}.routes.js`;
+  const importLine = `import ${routesKey} from '${importPath}';`;
+  const routesIndexPath = path.join(featureDir, 'routes.index.ts');
+
+  if (fs.existsSync(routesIndexPath)) {
+    let content = fs.readFileSync(routesIndexPath, 'utf8');
+    const before = content;
+
+    if (!content.includes(importPath)) {
+      const lines = content.split(/\r?\n/);
+      let insertAt = 0;
+      for (let i = lines.length - 1; i >= 0; i--) {
+        if (lines[i].trim().startsWith('import ')) {
+          insertAt = i + 1;
+          break;
+        }
+      }
+      lines.splice(insertAt, 0, importLine);
+      content = lines.join('\n');
+    }
+
+    if (!content.includes(`${routesKey},`)) {
+      content = content.replace(/export default \{/, `export default {\n  ${routesKey},`);
+    }
+
+    if (content !== before) {
+      fs.writeFileSync(routesIndexPath, content);
+    }
+  }
+
+  const routesDataPath = path.join(process.cwd(), 'src', 'app', 'routes', 'routes.data.ts');
+  if (fs.existsSync(routesDataPath)) {
+    let content = fs.readFileSync(routesDataPath, 'utf8');
+    const needle = `Routers.${routesKey}`;
+    if (!content.includes(needle)) {
+      content = content.replace(/const routes = \[([^\]]*)\];/, (m, inner) => {
+        const t = inner.trim();
+        return `const routes = [${t}, ${needle}];`;
+      });
+      fs.writeFileSync(routesDataPath, content);
+    }
+  }
+};
 
 // ---------- DB TYPE DETECTION ----------
 const DB_TYPES = { MONGO: 'mongodb', POSTGRES: 'postgres' };
@@ -225,12 +276,12 @@ const findOneLean = async (filter: MongoFilter = {}) => {
 
 const update = async (id: string | Types.ObjectId, updateData: IUpdate${CapName}) => {
   const ${moduleName} = await ${moduleName}Repo.update(id, updateData);
-  return ${moduleName} as I${CapName} | null;
+  return ${moduleName} 
 };
 
 const remove = async (id: string | Types.ObjectId) => {
   const ${moduleName} = await ${moduleName}Repo.remove(id);
-  return ${moduleName} as I${CapName} | null;
+  return ${moduleName} 
 };
 
 export default {
@@ -602,8 +653,15 @@ const generateModule = (moduleName, dbType) => {
     fs.writeFileSync(filePath, content);
   });
 
+  wireModuleRoutes(featureDir, moduleName);
+
   const dbLabel = dbType === DB_TYPES.POSTGRES ? 'PostgreSQL (TypeORM)' : 'MongoDB (Mongoose)';
   console.log(`✅ Module "${moduleName}" generated for ${dbLabel}.`);
+  if (fs.existsSync(path.join(featureDir, 'routes.index.ts'))) {
+    console.log(
+      '   Routes registered in feature-modules/routes.index.ts and app/routes/routes.data.ts.'
+    );
+  }
 };
 
 // ---------- COMMAND: GENERATE MODULE (m / p / g) ----------
