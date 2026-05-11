@@ -113,6 +113,49 @@ These keys are unique to every project. **Never commit or share your `private.pe
 
 ---
 
+## Built-in middleware
+
+Generated projects include three reusable middleware modules in `src/app/middleware/`. Together they cover **authentication**, **role checks**, and **rate limiting**.
+
+### How authentication is applied globally
+
+In `src/app/routes/routes.ts`, each feature router is mounted with **`tokenValidator`** and a shared list of **`ExcludedPath`** entries (from `routes.data.ts`):
+
+- Every request hits **`tokenValidator(excludedPaths)`** before your route handlers.
+- Paths listed in `excludedPaths` skip JWT checks (typically login, refresh, or public signup-style endpoints). Match rules use the **full path** (mount prefix + route path) and HTTP **method**, both normalized (trailing slashes stripped).
+- All other requests must send `Authorization: Bearer <jwt>`. The token is verified with the **RSA public key** from `getPublicKey()` (same key pair as in [Security & Keys](#security--keys)).
+- On success, the middleware sets **`res.locals.userId`** and **`res.locals.role`** from the JWT payload (`id` and `role`). Your handlers and downstream middleware can read these.
+- On failure (missing header, invalid token, expired token, missing public key), the middleware passes an **`AppError`** to Express (`401` for auth issues, `500` if the public key is missing). Use your global error handler to shape the HTTP response.
+
+**Exports from `token.validate.ts`:**
+
+| Export           | Purpose                                                                       |
+| ---------------- | ----------------------------------------------------------------------------- |
+| `tokenValidator` | Curried middleware factory: `(excludedPaths) => (req, res, next) => …`        |
+| `ExcludedPath`   | Helper class: `new ExcludedPath(url, method)` — `method` is stored uppercased |
+| `AppError`       | Error type with `statusCode`; used by auth and rate limiting                  |
+
+### Role-based access (`roleValidator.ts`)
+
+**`roleValidator`** is a **factory**: you call it with an allow-list of roles (values from `src/app/utility/constant.ts` **`Role`**). It returns standard Express middleware.
+
+- It reads **`res.locals.role`**, which **`tokenValidator` must have set earlier** on the same request. If you use `roleValidator` on a path that is excluded from JWT validation, `role` may be undefined and the check will fail as expected.
+- If the user’s role is **not** in the allow-list, the client gets **`403`** with a JSON body: `FORBIDDEN_ACCESS` and a clear message.
+- **Typical usage:** mount or apply `roleValidator([Role.ADMIN, …])` on routers or individual routes **after** the stack that runs `tokenValidator`, or only on subpaths that are never excluded from auth.
+
+_(The template ships this middleware ready to use; wire it into specific `_.routes.ts` files when you need admin-only or role-specific endpoints.)\*
+
+### Rate limiting (`rateLimiter.ts`)
+
+**`rateLimiter(limit, windowMs)`** returns **async** Express middleware that limits how many requests a caller can make in a sliding Redis-backed window.
+
+- **Identity:** It builds a Redis key from **`res.locals.apiKeyId`** (if you set it in earlier middleware) or the literal `public`, plus **HTTP method**, **route pattern** (`baseUrl` + `route.path`), and the client **IP** (via `clientIp.getter.ts`).
+- **Storage:** Uses **`connectToRedis()`**. The first request in a window sets the key’s TTL to **`windowMs`** (milliseconds). Count is incremented with **`INCR`**; when count **`> limit`**, the next middleware receives **`AppError`** with status **`429`**.
+- **Resilience:** If Redis errors, the middleware **fails open** (calls `next()` without blocking) so a short Redis outage does not take down the API. Tighten this behavior in production if you prefer fail-closed.
+- **Typical usage:** `router.post('/login', rateLimiter(5, 60_000), handler)` — e.g. five attempts per minute per IP for a sensitive route.
+
+---
+
 ## Getting Started with Development
 
 After the project is generated:
@@ -187,8 +230,7 @@ Running `npx moduler-framework <name>` gives you:
 - A live **Redis** connection script
 - Auto-generated RSA security keys
 - A global error handler
-- A request rate limiter
-- JWT token validation middleware
+- Middleware for **JWT auth**, **role checks**, and **Redis rate limiting** — see [Built-in middleware](#built-in-middleware)
 - Zod-based request validation
 - A standardized response handler
 
